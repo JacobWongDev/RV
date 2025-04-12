@@ -1,0 +1,23 @@
+CXX = g++
+CXXFLAGS = -std=c++23 -g -DTESTING
+BUILD_DIR = test
+objects = monitor.o enable.o
+programs = test_efsm1 test_efsm2 simple1 simple2 complex1 complex2 error_test test_enable
+
+all: $(BUILD_DIR) $(programs)
+
+# Example: g++ -std=c++23 -g -c monitor.cpp -o build/monitor.o
+$(objects): %.o : %.cpp
+	$(CXX) $(CXXFLAGS) -c $^ -o $(BUILD_DIR)/$@
+
+# Example: g++ -std=c++23 -g -o build/complex1 tests/complex1.cpp build/monitor.o build/enable.o
+$(programs): monitor.o enable.o
+	$(CXX) $(CXXFLAGS) -o test/$@ tests/$@.cpp $(BUILD_DIR)/monitor.o $(BUILD_DIR)/enable.o
+
+clean:
+	rm -rf $(BUILD_DIR)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+.PHONY: all clean
